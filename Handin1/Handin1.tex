@@ -1,0 +1,187 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+
+\title{Computational Geometry - Handin 1}
+\author{Christoffer Changtrakul Jensen \& }
+\date{September 2022}
+
+\begin{document}
+
+\maketitle
+
+\section*{Model}
+\begin{itemize}
+    \item $M$ - Memory size
+    \item $B$ - Block size
+    \item $W$ - Wrap size
+    \item $s$ - Speed of head
+    \item $b$ - \# of blocks per wrap ($\frac{W}{s}$)
+    \item $S_a$ - Read/write time for adjacent block $O(B)$
+    \item $S_n$ - Read/write time for non-adjacent block $O(B + b)$
+    \end{itemize}
+
+The main difference of the tape to the HDD is that seek time is long compared to the read time of a single byte. Because of that when developing algorithm for the tape it should be taken into consideration if the data is read sequentially or if the tape has to move to read the given position. \\
+To represent those times we could differentiate two types of read/write operations: \\
+\indent Read/write time for adjacent byte - $O(1)$ \\
+\indent Read/write time for non-adjacent byte(on average) - $O(W/2) = O(W)$\\\\
+\
+Based on those assumption it is clearly visible that the implementation of the algorithm should minimize the number of reads for non-adjacent bytes. However some algorithms require a large number of non-sequential I/O operations. This number could be minimized with reading sequentially some amount of data in blocks to the memory(for which seek time can be ignored). The larger the block, the fewer the number of non-sequential operations on the tape. The size of the block depends on the size of the memory. As a result it is possible to improve the performance of some algorithms with more memory and larger blocks.\\\\
+\
+We decided that it is an important metric to take into the consideration. The final formula for reads/writes depends on the chosen size of the block. Sequential time for I/O operation depends on the size of the block. Non-sequential I/O operations is a sum of sequential operation and the seek time:\\
+\indent $S_a$ - Read/write time for adjacent block $O(B)$\\
+\indent $S_n$ - Read/write time for non-adjacent block $O(B + b)$\\
+
+\section*{Minimum}
+\subsection*{Algorithm}
+Input: $N$ numbers, laid out sequentially from the start of the magnetic tape in blocks \\
+Assume $M \geq N + sizeof(number)$
+
+\begin{verbatim}
+def find_minimum(blocks: List[Block]):
+    minimum = INFINITY
+    for block_idx in len(blocks):
+        numbers = read_adjacent_block(blocks, block_idx)
+        for number in numbers:
+            if number < minimum:
+                minimum = number
+    return minimum
+\end{verbatim}
+
+\subsection*{Analysis}
+We define $n = \frac{N}{B}$ to be the number of input blocks. \\\\
+Since the input is laid out on the magnetic tape sequentially, and all we have to do for the algorithm is a single pass over the input, we start by reading the first block, and then every adjacent block after. As such, we can use $S_a$ when commenting on the complexity of reading the blocks. We read $n$ blocks, with each read taking $S_a$ time, giving as a complexity of: \\\\
+$O(n \cdot S_a) = O(\frac{N}{B} \cdot S_a) = O(\frac{N}{B} \cdot B) = O(N)$\\\\
+\
+We can observe that the algorithm does not require any non-sequential I/O operations. In this case the complexity would the same if it was implemented without the usage of the blocks(or with the block size of 1). 
+
+\section*{Partitioning}
+Input: $N$ numbers, laid out sequentially from the start of the magnetic tape
+
+\subsection*{Algorithm}
+
+\begin{verbatim}
+def partition(A, p):
+    i = 0
+    j = number_of_blocks(A) - 1
+
+    L = read_non_adjacent_block(A, i)
+    li = 0
+
+    R = read_non_adjacent_block(A, j)
+    ri = 0
+
+    while True:
+        while L[li] < p:
+            li += 1
+            if li >= B:
+                li = 0
+                write_non_adjacent_block(A, L, i)
+                i += 1
+                L = read_adjacent_block(A, i)
+
+        while R[ri] >= p:
+            ri -= 1
+            if ri < 0:
+                ri = B-1
+                write_non_adjacent_block(A, R, j)
+                j -= 1
+                R = read_adjacent_block(A, j)
+        if i >= j and  li >= ri:
+            return
+        swap(L[li], R[ri])
+\end{verbatim}
+
+\subsection*{Analysis}
+We define $n = \frac{N}{B}$ to be the number of input blocks. \\\\
+The algorithm reads in blocks, bigger block size can improve performance.
+The algorithm starts with two pointers, one is pointing to the begining of the data, the second one to the end of the data.
+Then moves each pointer to the center until it finds the value, that should be moved to the other side.
+When pointer moves out of the current block, then the block is written to the tape, and the next one is read. The algorithm stops when both pointers meet.\\
+In the whole process the algorithm reads and writes $n$ blocks. 
+
+\subsubsection*{Worst case scenario}
+Input: \\
+$p = 1\\
+A = [10, 9, ..., 2, 1]$\\\\
+For this input every number must be swapped. The algorithm moves both pointers to the center, and after the current block ends it must write changes and read the next one. In this case every read, write operation is happening in the left and right side by turns. When the next block has to be read, then the tape has to move to the other side of the data. \\ \\
+There is $n$ block reads, each of them is non sequential and takes $B+b$ time. \\
+
+$O(n \cdot S_n) = O(n \cdot (B+b)) = O(\frac{N}{B} \cdot (B+b)) = O(N \cdot \frac{b \cdot N}{B})
+
+\subsubsection*{Best case scenario}
+Input:\\
+$p = 2\\
+A = [1,1,1]$\\\\
+This data is already in the right order. The algorithm moves only the left pointer, looking for a number that has to be swapped. It does not find any and traverses the whole data sequentially, from left to right. There is no time wasted for seeks.\\
+
+There is $n$ block reads, each of them is sequential and as a result seek time can be ignored.\\
+
+% $O(n \cdot B) = O(\frac{N}{B} \cdot B) = O(N)$
+$O(n \cdot S_a) = O(\frac{N}{B} \cdot S_a) = O(\frac{N}{B} \cdot B) = O(N)$
+
+\section*{Sorting}
+Input: $N$ numbers, laid out sequentially from the start of the magnetic tape in blocks \\
+\subsection*{Algorithm}
+
+\begin{verbatim}
+def quicksort(blocks: List[Block], left_idx: int, right_idx: int):
+    if (right_idx - left_idx) < 0:
+        return blocks
+    last_block = read_non_adjacent_block(blocks, right_idx)
+    pivot = last_block[-1]
+    partition_idx = partition(blocks[left_idx:right_idx], pivot)
+    quicksort(blocks, left_idx, partition_idx-1)
+    quicksort(blocks, partition_idx+1, right_idx)
+\end{verbatim}
+
+\subsection*{Analysis}
+The quicksort algorithm works recursively, by finding the partition index using the partition sub-routine, explained above. Apart from this, each recursive call spends $S_n$ time reading the last block of the input, to find the pivot element.\\\\
+Using the Master Theorem, we can analyse the running time of the algorithm:\\
+$f(n) = 2f(\frac{n}{2}) + O(n + S_n) = $\\
+$O((n + S_n) \cdot log(n))$
+
+\subsection*{Worst case}
+For a worst case input to the quicksort algorithm of size $n$, which is where the input is given in reverse order, the algorithm needs to make $n$ pivots in order to sort the data, with each pivot and subsequent call to partition correctly sorts exactly one element. More specifically, the two recursive calls in quicksort for a sub-problem of size $i$, is partitioned into sub-problems of size $i-1$ and $0$. \\
+Analysing the running time of the algorithm with worst case input using the Master Theorem, we get the following:\\\\
+$f(n) = f(n-1) + O(n + S_n) = $\\
+$O(((n + S_n) \cdot n) = O(n^2 + n \cdot S_n)$
+
+\section*{The limitations}
+Considering a lower bound for the running time of the sorting algorithm, we assume the best case input, which is input for which the partition sub-routine always picks the middle index as partitioning index. In this case, using the Master Theorem to analyse the running time, we get the same is the analysis if the algorithm, namely:\\\\
+$f(n) = 2f(\frac{n}{2}) + O(n + S_n) = $\\
+$O((n + S_n) \cdot log(n))$
+
+\section*{Two tapes}
+
+\subsection*{Minimum}
+The algorithm reads sequentially the whole data only once and it does not write anything. In this case it is not possible to improve the algorithm if the data is stored only on one tape.
+The only possible option to improve the algorithm would be to keep the input data on both tapes. Then it would be possible to run it parallel on different halves of the data. It could make it twice as fast.
+
+\subsection*{Partitioning}
+The partitioning with two tapes can be 
+
+\subsubsection*{Partitioning}
+\begin{verbatim}
+def partition_on_two_tapes(A, p):
+    T2 = alloc_second_tape()
+
+    j = 0
+    for i in range(0, len(A)):
+        if A[i] < p:
+            T2[j] = A[i]
+            j += 1
+
+    for i in range(0, len(A)):
+        if A[i] >= p:
+            T2[j] = A[i]
+            j += 1
+\end{verbatim}
+
+\subsubsection*{Analysis}
+There is no need to use blocks for reading the data as all read and write operations are made sequentially without any seeks.
+The algorithm reads the whole data for the first time, checking for all the numbers that are lower then $p$. Each found number is then saved to the second tape. The next steps reads the whole input again looking for numbers bigger than $p$ and saving them sequentially, after the lower values to the second tape. This gives the correct output on the second tape.\\\\
+In this way the first tape is sequentially read two times. The second tape is written sequentially only once. The complexity of the algorithm is linear to the size of the input.\\\\
+$O(N)$
+
+\end{document}
