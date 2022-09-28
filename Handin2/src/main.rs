@@ -2,6 +2,7 @@ use graham::{grahams_scan, print_hull};
 use structs::Point;
 
 mod graham;
+mod gift_wrapping;
 mod structs;
 
 fn main() {

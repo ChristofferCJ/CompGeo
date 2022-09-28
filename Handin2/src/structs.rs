@@ -27,3 +27,27 @@ pub enum Side {
     BOTTOM,
     INTERSECT
 }
+
+pub struct Line {
+    pub start: Point,
+    pub end: Point
+}
+
+impl Line {
+    pub fn check_side(&self, p: &Point) -> Side {
+        let sign = ((p.x - self.start.x) 
+            * (self.end.y - self.start.y))
+            - ((p.y - self.start.y)
+            * (self.end.x - self.start.x));
+        
+            if sign > 0.0 {
+                return Side::TOP
+            }
+            else if sign < 0.0 {
+                return Side::BOTTOM
+            }
+            else {
+                return Side::INTERSECT
+            }
+    }
+}
