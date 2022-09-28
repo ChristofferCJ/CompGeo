@@ -3,6 +3,7 @@ use structs::Point;
 
 mod graham;
 mod gift_wrapping;
+mod chan;
 mod structs;
 
 fn main() {
