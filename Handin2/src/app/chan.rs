@@ -1,4 +1,4 @@
-use crate::structs::Point;
+use crate::Point;
 
 fn chan(points: Vec<Point>) -> Option<Vec<Point>> {
     let n = points.len() as f32;

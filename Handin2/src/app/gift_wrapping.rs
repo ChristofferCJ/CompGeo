@@ -1,6 +1,6 @@
-use crate::structs::*;
+use crate::app::structs::*;
 
-fn gift_wrapping(points: &Vec<Point>) -> Vec<Point> {
+pub fn gift_wrapping(points: &Vec<Point>) -> Vec<Point> {
 
     let mut point_on_hull = left_most_point(points);
 
@@ -10,17 +10,21 @@ fn gift_wrapping(points: &Vec<Point>) -> Vec<Point> {
         let mut endpoint = points.first().unwrap();
 
         for j in 0..points.len() {
+            let latest_on_hull = hull.last().unwrap();
+            let point_j = points[j];
             let line = Line {
-                start: points[j],
+                start: latest_on_hull.clone(),
                 end: endpoint.clone(),
             };
-            //TODO check if on the left instead of sideness
-            if endpoint == point_on_hull || line.check_side(endpoint) == Side::TOP {
+            if endpoint == point_on_hull || line.check_side(&point_j) == Side::TOP {
                 endpoint = &points[j];
             }
         }
+        point_on_hull = endpoint;
 
-        //TODO end condition
+        if endpoint == hull.first().unwrap() {
+            break;
+        }
     }
 
     return hull;

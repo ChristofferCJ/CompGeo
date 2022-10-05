@@ -1,4 +1,5 @@
-use crate::structs::{Point, Side, check_side};
+use crate::app::structs::{check_side, Side};
+use crate::Point;
 
 pub fn grahams_scan(mut points: Vec<Point>) -> Option<Vec<Point>> {
     if points.len() < 3 { return None; }
@@ -9,7 +10,7 @@ pub fn grahams_scan(mut points: Vec<Point>) -> Option<Vec<Point>> {
     return Some(hull);
 }
 
-pub fn print_hull(hull: &Vec<Point>, name: String) {
+pub fn print_hull(hull: &Vec<Point>, name: &str) {
     println!("{:?}", name);
     for point in hull.iter() {
         println!("{:?}", point);

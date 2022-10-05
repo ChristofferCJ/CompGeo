@@ -1,27 +1,23 @@
-use graham::{grahams_scan, print_hull};
-use structs::Point;
+use app::graham::{grahams_scan, print_hull};
+use app::structs::Point;
+use app::gift_wrapping::gift_wrapping;
+use crate::tests::test_data::points_1;
 
-mod graham;
-mod gift_wrapping;
-mod chan;
-mod structs;
+mod app;
+mod tests;
 
 fn main() {
-    let points = vec![
-        Point {x: 0.01, y: 0.0},
-        Point {x: 0.02, y: 1.0},
-        Point {x: 1.03, y: 1.0},
-        Point {x: 1.04, y: 0.0},
-        Point {x: 0.55, y: 0.5},
-        Point {x: -0.5, y: 0.5},
-        Point {x: 0.56, y: 0.5},
-        Point {x: 0.57, y: 0.5},
-    ];
-    let result = grahams_scan(points);
+
+    let result = grahams_scan(points_1());
     match result {
         Some(points) => {
-            print_hull(&points, "Convex hull".to_owned());
+            print_hull(&points, "Convex hull(graham scan)");
         },
         None => { panic!("You fucked up") }
     }
+
+    println!();
+
+    let result = gift_wrapping(&points_1());
+    print_hull(&result, "Convex hull(gift wrapping)");
 }

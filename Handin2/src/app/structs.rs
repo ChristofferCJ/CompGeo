@@ -21,7 +21,7 @@ pub fn check_side(sl: Point, el: Point, p: Point) -> Side {
         }
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Side {
     TOP,
     BOTTOM,
@@ -41,10 +41,10 @@ impl Line {
             * (self.end.x - self.start.x));
         
             if sign > 0.0 {
-                return Side::TOP
+                return Side::BOTTOM
             }
             else if sign < 0.0 {
-                return Side::BOTTOM
+                return Side::TOP
             }
             else {
                 return Side::INTERSECT
