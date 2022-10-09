@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::app::structs::*;
-    use crate::{generate_points_square, gift_wrapping, grahams_scan};
-    use crate::app::data_generator::generate_points_circle;
+    use crate::{gift_wrapping, grahams_scan};
+    use crate::app::data_generator::{generate_points_circle, generate_points_square};
     use crate::tests::test_data::*;
 
 
