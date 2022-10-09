@@ -1,7 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::app::structs::*;
-    use crate::{gift_wrapping, grahams_scan};
+    use crate::{generate_points_square, gift_wrapping, grahams_scan};
+    use crate::app::data_generator::generate_points_circle;
     use crate::tests::test_data::*;
 
 
@@ -44,5 +45,31 @@ mod tests {
 
         let result2 = grahams_scan(points_2());
         assert_eq!(result2, Some(points_2_expected()));
+    }
+
+    #[test]
+    fn test_compare_algorithms_with_random_square() {
+
+        for i in 0..100 {
+            let data = generate_points_square(1000, i);
+
+            let result_gift = gift_wrapping(&data);
+            let result_graham = grahams_scan(data);
+
+            assert_eq!(result_graham, Some(result_gift));
+        }
+    }
+
+    #[test]
+    fn test_compare_algorithms_with_random_circle() {
+
+        for i in 0..100 {
+            let data = generate_points_circle(1000, i);
+
+            let result_gift = gift_wrapping(&data);
+            let result_graham = grahams_scan(data);
+
+            assert_eq!(result_graham, Some(result_gift));
+        }
     }
 }
