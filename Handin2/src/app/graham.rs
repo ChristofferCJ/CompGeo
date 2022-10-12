@@ -1,11 +1,12 @@
 use crate::app::structs::{check_side, Side};
 use crate::Point;
 
-pub fn grahams_scan(mut points: Vec<Point>) -> Option<Vec<Point>> {
+pub fn grahams_scan(points: &Vec<Point>) -> Option<Vec<Point>> {
     if points.len() < 3 { return None; }
-    points.sort_by(|a, b| a.x.partial_cmp(&b.x).unwrap());
-    let uh = find_hull(&points, Side::TOP);
-    let lh = find_hull(&points, Side::BOTTOM);
+    let mut points_sorted = points.to_vec();
+    points_sorted.sort_by(|a, b| a.x.partial_cmp(&b.x).unwrap());
+    let uh = find_hull(&points_sorted, Side::TOP);
+    let lh = find_hull(&points_sorted, Side::BOTTOM);
     let hull = merge_hulls(uh, lh);
     return Some(hull);
 }
