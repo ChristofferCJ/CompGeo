@@ -44,3 +44,23 @@ pub fn generate_points_circle(amount: usize, seed: u64) -> Vec<Point> {
         }
     }
 }
+
+pub fn generate_points_curve(amount: usize, seed: u64) -> Vec<Point> {
+    let mut rng = StdRng::seed_from_u64(seed);
+    let mut points = Vec::<Point>::new();
+
+    loop {
+
+        let x = rng.gen::<f32>() * 100.0;
+        let y = x*x;
+
+        if points.iter().any(|&p| p.x == x || p.y == y) {
+            continue
+        }
+        points.push(Point {x, y});
+
+        if points.len() >= amount {
+            return points;
+        }
+    }
+}
