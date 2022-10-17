@@ -50,8 +50,8 @@ pub fn generate_points_curve(amount: usize, seed: u64) -> Vec<Point> {
     let mut points = Vec::<Point>::new();
 
     loop {
-
-        let x = rng.gen::<f32>() * 100.0;
+        // Lower precision for x, so that there is enough precision space for y
+        let x = (((rng.gen::<f32>() * 1000.0) as i32) as f32) / 1000.0;
         let y = x*x;
 
         if points.iter().any(|&p| p.x == x || p.y == y) {

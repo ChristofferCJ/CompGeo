@@ -74,15 +74,29 @@ mod tests {
     }
 
     #[test]
-    fn test_compare_algorithms_with_random_curve() {
+    fn test_gift_wrapping_curve() {
 
         for i in 0..100 {
             let data = generate_points_curve(1000, i);
-
             let result_gift = gift_wrapping(&data);
+
+            assert_eq!(result_gift.len(), data.len());
+        }
+    }
+
+    #[test]
+    fn test_grahams_scan_curve() {
+
+        for i in 0..100 {
+            let data = generate_points_curve(1000, i);
             let result_graham = grahams_scan(&data);
 
-            assert_eq!(result_graham, Some(result_gift));
+            if let Some(points) = result_graham {
+                assert_eq!(points.len(), data.len());
+            }
+            else {
+                assert!(false)
+            }
         }
     }
 }
