@@ -6,7 +6,11 @@ pub fn chan(points: Vec<Point>) -> Option<Vec<Point>> {
     let uh = hull(&points, &Hull::UPPER);
     let lh = hull(&points, &Hull::LOWER);
 
-    if uh.is_none() || lh.is_none() { return None; }
+    if uh.is_none() && lh.is_none() { return None; }
+
+    if uh.is_none() { return lh; }
+    if lh.is_none() { return uh; }
+
     let hull = merge_hulls(uh.unwrap(), lh.unwrap());
     return Some(hull);
 }
