@@ -66,6 +66,7 @@ mod tests {
             let result_graham = grahams_scan(&data).unwrap();
             let result_chan = chan(&data).unwrap();
 
+            println!("{:?}", result_graham.len().abs_diff(result_chan.len()));
             assert_eq!(result_graham, result_gift);
             assert_eq!(result_chan, result_gift);
         }
@@ -118,9 +119,9 @@ mod tests {
 
         for i in 0..100 {
             let data = generate_points_curve(1000, i);
-            let result_graham = chan(&data);
+            let result_chan = chan(&data);
 
-            if let Some(points) = result_graham {
+            if let Some(points) = result_chan {
                 assert_eq!(points.len(), data.len());
             }
             else {

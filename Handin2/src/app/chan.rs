@@ -13,8 +13,8 @@ pub fn chan(points: &Vec<Point>) -> Option<Vec<Point>> {
 }
 
 fn hull(points: &Vec<Point>, hull: &Hull) -> Option<Vec<Point>> {
-    let n = points.len() as f32;
-    let iters = (n.log2().log2().ceil() as u32) + 1;
+    let n = points.len() as f64;
+    let iters = (n.log2().log2().ceil() as u32) + 2;
     for i in 1..=iters {
         let size = 2u32.pow(2u32).pow(i);
         let guess = hull_with_size(points, hull, size);
@@ -29,9 +29,10 @@ fn hull_with_size(points: &Vec<Point>, hull: &Hull, size: u32) -> Option<Vec<Poi
     let mut h: Vec<Point> = Vec::new();
     let mut p = left_most_point(points);
     let mut l = init_ray(&p, hull);
+    let rightmost = rightmost_point(points);
     for _ in 0..size {
         h.push(p);
-        if is_rightmost_point(points, &p) { break; }
+        if p.x >= rightmost.x { break; }
         let mut tangents: Vec<Line> = Vec::new();
         for i in 0..hulls.len() {
             if hulls[i].len() > 0 {
@@ -41,25 +42,21 @@ fn hull_with_size(points: &Vec<Point>, hull: &Hull, size: u32) -> Option<Vec<Poi
         }
         l = smallest_tangent(&tangents, l, hull);
         p = l.end;
-        hulls = remove_left_points(hulls, &p);
+        remove_left_points(&mut hulls, &p);
     }
-    if is_rightmost_point(points, &p) {
+    if p.x >= rightmost.x {
         return Some(h);
     } else {
         return None
     }
 }
 
-fn remove_left_points(hulls: Vec<Vec<Point>>, p: &Point) -> Vec<Vec<Point>> {
-    let mut res: Vec<Vec<Point>> = Vec::new();
+fn remove_left_points(hulls: &mut Vec<Vec<Point>>, p: &Point) {
     for hull in hulls {
-        let mut new_hull: Vec<Point> = Vec::new();
-        for point in hull {
-            if point.x > p.x { new_hull.push(point); }
+        while hull.len() > 0 && hull.last().unwrap().x <= p.x {
+            hull.pop();
         }
-        res.push(new_hull);
     }
-    return res
 }
 
 fn smallest_tangent(tangents: &Vec<Line>, l: Line, hull: &Hull) -> Line {
@@ -115,6 +112,9 @@ fn find_hulls(partitions: Vec<Vec<Point>>, hull: Hull) -> Vec<Vec<Point>> {
             }
         }
     }
+    for arr in &mut res {
+        arr.reverse();
+    }
     return res;
 }
 
@@ -127,21 +127,24 @@ fn left_most_point(points: &Vec<Point>) -> Point {
     return *res;
 }
 
-fn is_rightmost_point(points: &Vec<Point>, p: &Point) -> bool {
+fn rightmost_point(points: &Vec<Point>) -> Point {
+    let mut p = points.first().unwrap();
     for point in points {
-        if point.x > p.x { return false; }
+        if point.x > p.x {
+            p = point;
+        }
     }
-    return true;
+    return p.clone();
 }
 
 fn init_ray(point: &Point, hull: &Hull) -> Line {
     match hull {
         Hull::UPPER => {
-            let end = Point { x: point.x + 1f32, y: point.y };
+            let end = Point { x: point.x + 1f64, y: point.y };
             return Line { start: *point, end: end }
         },
         Hull::LOWER => {
-            let end = Point { x: point.x - 1f32, y: point.y };
+            let end = Point { x: point.x - 1f64, y: point.y };
             return Line { start: *point, end: end }
         }
     }

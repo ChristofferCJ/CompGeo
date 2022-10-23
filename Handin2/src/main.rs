@@ -74,7 +74,7 @@ fn print_benchmark(points: &Vec<Point>) {
             gift_wrapping,
             chan,
         } => {
-            println!("OK gs={graham_scan} gw={gift_wrapping}, ch={chan}")
+            println!("OK gs={graham_scan} gw={gift_wrapping} ch={chan}")
         }
         BenchmarkResult::Error { msg } => {
             println!("ERROR {msg}")
@@ -100,8 +100,8 @@ fn read_points_from_file(file_path: &PathBuf) -> std::io::Result<Vec<Point>> {
         let y = splitted[1];
 
         points.push(Point {
-            x: x.parse::<f32>().unwrap(),
-            y: y.parse::<f32>().unwrap(),
+            x: x.parse::<f64>().unwrap(),
+            y: y.parse::<f64>().unwrap(),
         })
     }
 

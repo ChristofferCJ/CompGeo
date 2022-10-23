@@ -1,7 +1,7 @@
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Point {
-    pub x: f32,
-    pub y: f32,
+    pub x: f64,
+    pub y: f64,
 }
 
 pub fn check_side(sl: Point, el: Point, p: Point) -> Side {
