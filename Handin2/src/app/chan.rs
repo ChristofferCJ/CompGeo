@@ -2,7 +2,7 @@ use crate::app::{structs::{Hull, Side, Direction}, graham::{find_hull, merge_hul
 
 use super::structs::{Point, Line};
 
-pub fn chan(points: Vec<Point>) -> Option<Vec<Point>> {
+pub fn chan(points: &Vec<Point>) -> Option<Vec<Point>> {
     let uh = hull(&points, &Hull::UPPER);
     let lh = hull(&points, &Hull::LOWER);
 

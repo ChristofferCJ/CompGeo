@@ -10,6 +10,7 @@ use clap::{Parser, ValueEnum};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use crate::app::benchmark::{benchmark_algorithms, BenchmarkResult};
+use crate::app::chan::chan;
 
 mod app;
 mod tests;
@@ -20,6 +21,7 @@ enum Action {
     Benchmark,
     GrahamsScan,
     GiftWrapping,
+    ChansAlgorithm,
 }
 
 #[derive(Parser)]
@@ -57,6 +59,10 @@ fn handle_action(args: &Cli, data: &Vec<Point>) {
             let result = gift_wrapping(data);
             print_points(&result);
         }
+        Action::ChansAlgorithm => {
+            let result = chan(data).unwrap();
+            print_points(&result)
+        }
     }
 }
 
@@ -65,9 +71,10 @@ fn print_benchmark(points: &Vec<Point>) {
     match result {
         BenchmarkResult::Success {
             graham_scan,
-            gift_wrapping
+            gift_wrapping,
+            chan,
         } => {
-            println!("OK gs={graham_scan} gw={gift_wrapping}")
+            println!("OK gs={graham_scan} gw={gift_wrapping}, ch={chan}")
         }
         BenchmarkResult::Error { msg } => {
             println!("ERROR {msg}")

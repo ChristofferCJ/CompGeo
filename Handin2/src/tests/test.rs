@@ -49,10 +49,10 @@ mod tests {
 
     #[test]
     fn test_chan() {
-        let result = chan(points_1());
+        let result = chan(&points_1());
         assert_eq!(result, Some(points_1_expected()));
 
-        let result2 = chan(points_2());
+        let result2 = chan(&points_2());
         assert_eq!(result2, Some(points_2_expected()));
     }
 
@@ -63,9 +63,11 @@ mod tests {
             let data = generate_points_square(1000, i);
 
             let result_gift = gift_wrapping(&data);
-            let result_graham = grahams_scan(&data);
+            let result_graham = grahams_scan(&data).unwrap();
+            let result_chan = chan(&data).unwrap();
 
-            assert_eq!(result_graham, Some(result_gift));
+            assert_eq!(result_graham, result_gift);
+            assert_eq!(result_chan, result_gift);
         }
     }
 
@@ -76,9 +78,11 @@ mod tests {
             let data = generate_points_circle(1000, i);
 
             let result_gift = gift_wrapping(&data);
-            let result_graham = grahams_scan(&data);
+            let result_graham = grahams_scan(&data).unwrap();
+            let result_chan = chan(&data).unwrap();
 
-            assert_eq!(result_graham, Some(result_gift));
+            assert_eq!(result_graham, result_gift);
+            assert_eq!(result_chan, result_gift);
         }
     }
 
@@ -99,6 +103,22 @@ mod tests {
         for i in 0..100 {
             let data = generate_points_curve(1000, i);
             let result_graham = grahams_scan(&data);
+
+            if let Some(points) = result_graham {
+                assert_eq!(points.len(), data.len());
+            }
+            else {
+                assert!(false)
+            }
+        }
+    }
+
+    #[test]
+    fn test_chan_curve() {
+
+        for i in 0..100 {
+            let data = generate_points_curve(1000, i);
+            let result_graham = chan(&data);
 
             if let Some(points) = result_graham {
                 assert_eq!(points.len(), data.len());
