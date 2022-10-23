@@ -2,6 +2,7 @@
 mod tests {
     use crate::app::{structs::*, chan::chan};
     use crate::{gift_wrapping, grahams_scan};
+    use crate::app::data_generator::{generate_points_circle, generate_points_curve, generate_points_square};
     use crate::tests::test_data::*;
 
 
@@ -39,10 +40,10 @@ mod tests {
 
     #[test]
     fn test_graham_scan() {
-        let result = grahams_scan(points_1());
+        let result = grahams_scan(&points_1());
         assert_eq!(result, Some(points_1_expected()));
 
-        let result2 = grahams_scan(points_2());
+        let result2 = grahams_scan(&points_2());
         assert_eq!(result2, Some(points_2_expected()));
     }
 
@@ -53,5 +54,58 @@ mod tests {
 
         let result2 = chan(points_2());
         assert_eq!(result2, Some(points_2_expected()));
+    }
+
+    #[test]
+    fn test_compare_algorithms_with_random_square() {
+
+        for i in 0..100 {
+            let data = generate_points_square(1000, i);
+
+            let result_gift = gift_wrapping(&data);
+            let result_graham = grahams_scan(&data);
+
+            assert_eq!(result_graham, Some(result_gift));
+        }
+    }
+
+    #[test]
+    fn test_compare_algorithms_with_random_circle() {
+
+        for i in 0..100 {
+            let data = generate_points_circle(1000, i);
+
+            let result_gift = gift_wrapping(&data);
+            let result_graham = grahams_scan(&data);
+
+            assert_eq!(result_graham, Some(result_gift));
+        }
+    }
+
+    #[test]
+    fn test_gift_wrapping_curve() {
+
+        for i in 0..100 {
+            let data = generate_points_curve(1000, i);
+            let result_gift = gift_wrapping(&data);
+
+            assert_eq!(result_gift.len(), data.len());
+        }
+    }
+
+    #[test]
+    fn test_grahams_scan_curve() {
+
+        for i in 0..100 {
+            let data = generate_points_curve(1000, i);
+            let result_graham = grahams_scan(&data);
+
+            if let Some(points) = result_graham {
+                assert_eq!(points.len(), data.len());
+            }
+            else {
+                assert!(false)
+            }
+        }
     }
 }
