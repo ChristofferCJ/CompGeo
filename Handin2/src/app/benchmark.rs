@@ -1,10 +1,11 @@
 use std::time::Instant;
-use crate::{gift_wrapping, grahams_scan, Point};
+use crate::{chan, gift_wrapping, grahams_scan, Point};
 
 pub enum BenchmarkResult {
     Success {
         graham_scan: u128,
         gift_wrapping: u128,
+        chan: u128,
     },
     Error {
         msg: String,
@@ -19,11 +20,15 @@ pub fn benchmark_algorithms(data: &Vec<Point>) -> BenchmarkResult {
     let (gift_time, gift_result) = measure_time(|| {
         gift_wrapping(&data)
     });
+    let (chan_time, chan_result) = measure_time(|| {
+        chan(&data).unwrap()
+    });
 
-    if gift_result == grahams_result {
+    if gift_result == grahams_result && gift_result == chan_result {
         return BenchmarkResult::Success {
             graham_scan: grahams_time,
             gift_wrapping: gift_time,
+            chan: chan_time,
         }
     }
 
