@@ -8,16 +8,13 @@ pub fn chan(points: &Vec<Point>) -> Option<Vec<Point>> {
 
     if uh.is_none() && lh.is_none() { return None; }
 
-    if uh.is_none() { return lh; }
-    if lh.is_none() { return uh; }
-
     let hull = merge_hulls(uh.unwrap(), lh.unwrap());
     return Some(hull);
 }
 
 fn hull(points: &Vec<Point>, hull: &Hull) -> Option<Vec<Point>> {
     let n = points.len() as f32;
-    let iters = n.log2().log2().ceil() as u32;
+    let iters = (n.log2().log2().ceil() as u32) + 1;
     for i in 1..=iters {
         let size = 2u32.pow(2u32).pow(i);
         let guess = hull_with_size(points, hull, size);
