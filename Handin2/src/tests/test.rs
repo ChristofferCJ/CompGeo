@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::app::structs::*;
+    use crate::app::{structs::*, chan::chan};
     use crate::{gift_wrapping, grahams_scan};
     use crate::tests::test_data::*;
 
@@ -43,6 +43,15 @@ mod tests {
         assert_eq!(result, Some(points_1_expected()));
 
         let result2 = grahams_scan(points_2());
+        assert_eq!(result2, Some(points_2_expected()));
+    }
+
+    #[test]
+    fn test_chan() {
+        let result = chan(points_1());
+        assert_eq!(result, Some(points_1_expected()));
+
+        let result2 = chan(points_2());
         assert_eq!(result2, Some(points_2_expected()));
     }
 }

@@ -17,7 +17,7 @@ pub fn print_hull(hull: &Vec<Point>, name: &str) {
     }
 }
 
-fn merge_hulls(uh: Vec<Point>, mut lh: Vec<Point>) -> Vec<Point> {
+pub fn merge_hulls(uh: Vec<Point>, mut lh: Vec<Point>) -> Vec<Point> {
     let mut hull = Vec::<Point>::new();
     for point in uh.into_iter() {
         hull.push(point);
@@ -31,7 +31,7 @@ fn merge_hulls(uh: Vec<Point>, mut lh: Vec<Point>) -> Vec<Point> {
     return hull;
 }
 
-fn find_hull(points: &Vec<Point>, side: Side) -> Vec<Point> {
+pub fn find_hull(points: &Vec<Point>, side: Side) -> Vec<Point> {
     // assumes the points are sorted and there are at least 3 points
     let mut hull = Vec::<Point>::new();
     hull.push(points[0]);

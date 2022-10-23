@@ -39,7 +39,7 @@ pub fn points_2() -> Vec<Point> {
         Point { x: 7.5, y: 2.9 },
         Point { x: 8.0, y: 2.0 },
         Point { x: 8.5, y: 1.6 },
-        Point { x: 9.0, y: 1.0 },
+        Point { x: 9.01, y: 1.0 },
 
         Point { x: 9.0, y: -1.0 },
         Point { x: 8.5, y: -1.6 },
@@ -55,7 +55,7 @@ pub fn points_2() -> Vec<Point> {
         Point { x: 2.5, y: -2.9 },
         Point { x: 2.0, y: -2.0 },
         Point { x: 1.5, y: -1.6 },
-        Point { x: 1.0, y: -1.0 },
+        Point { x: 1.01, y: -1.0 },
     ];
 }
 
@@ -67,13 +67,13 @@ pub fn points_2_expected() -> Vec<Point> {
         Point { x: 5.0, y: 5.5 },
         Point { x: 6.0, y: 5.0,},
         Point { x: 7.0, y: 4.0,},
-        Point { x: 9.0, y: 1.0,},
+        Point { x: 9.01, y: 1.0,},
         Point { x: 9.0, y: -1.0,},
         Point { x: 7.0, y: -4.0,},
         Point { x: 6.0, y: -5.0,},
         Point { x: 5.0, y: -5.5 },
         Point { x: 4.0, y: -5.0,},
         Point { x: 3.0, y: -4.0,},
-        Point { x: 1.0, y: -1.0,},
+        Point { x: 1.01, y: -1.0,},
     ];
 }
